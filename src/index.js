@@ -7,7 +7,7 @@ const _bind = new WeakMap();
 const _unbind = new WeakMap();
 
 // Global object
-class CustomAttributes {
+class AttributeJS {
   constructor() {
     _attributes.set(this, {});
 
@@ -77,4 +77,4 @@ class CustomAttributes {
   }
 }
 
-window.customAttributes = new CustomAttributes();
+window.attributejs = new AttributeJS();
