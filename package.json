@@ -1,0 +1,40 @@
+{
+  "name": "attributejs",
+  "version": "1.0.0",
+  "description": "Attribute.js is a <1KB library alternative to Custom Elements v1 with the same modern API",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack -w --config webpack.config",
+    "build": "webpack --config webpack.prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/code-strats/attributejs.git"
+  },
+  "keywords": [
+    "custom",
+    "attributes",
+    "web",
+    "elements"
+  ],
+  "author": "Jacob Sorrell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/code-strats/attributejs/issues"
+  },
+  "homepage": "https://github.com/code-strats/attributejs#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^0.28.11",
+    "mini-css-extract-plugin": "^0.4.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.1",
+    "style-loader": "^0.21.0",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.4"
+  }
+}
