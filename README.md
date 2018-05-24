@@ -1,4 +1,4 @@
-# Custom Attributes
+# Attribute.js
 
 Define custom attributes on standard HTML elements and use the same [Custom Elements v1 API](https://developers.google.com/web/fundamentals/web-components/customelements) you know and love to encapsulate your functionality.
 
@@ -73,7 +73,7 @@ The Attribute.js library exposes a very similar API to the [Custom Elements v1 s
 
 Classes that are defined on the global object are given lifecycle callbacks to which you may respond appropriately with your corresponding code.
 
-### Define custom attribute
+### Defining custom attributes
 
 To define a custom attribute, invoke the `define` method on the global object `attributejs`.
 The method takes two arguments:
@@ -109,7 +109,7 @@ connectedCallback() {
 The disconnectedCallback method is invoked either when the element is removed from the DOM,
 or the custom attribute is removed from the element.
 
-The element is still available via the `element` property within this method and any necessary cleanup can be done.
+The element is still available via the `element` property within this method and any necessary clean up can be done.
 
 ```js
 disconnectedCallback() {
@@ -126,7 +126,7 @@ disconnectedCallback() {
 ### Motivation
 
 Safari have declined allowing developers to extend native elements with the proposed `is="my-element"`
-attribute, which has stalled the Custom Elements v1 project.
+attribute, which has created complications for the Custom Elements v1 project.
 
 The Attribute.js library adds support for extending native elements, whilst keeping the Custom Elements v1 API intact.
 
