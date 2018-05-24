@@ -1,6 +1,6 @@
 {
   "name": "attributejs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Attribute.js is a <1KB library alternative to Custom Elements v1 with the same modern API",
   "main": "index.js",
   "scripts": {
