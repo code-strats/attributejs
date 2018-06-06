@@ -1,10 +1,10 @@
 {
   "name": "attributejs",
-  "version": "1.0.1",
-  "description": "Attribute.js is a <1KB library alternative to Custom Elements v1 with the same modern API",
+  "version": "2.0.0",
+  "description": "AttributeJS is a 1KB library alternative to Custom Elements v1 with the same modern API",
   "main": "index.js",
   "scripts": {
-    "start": "webpack -w --config webpack.config",
+    "start": "webpack-dev-server -w --config webpack.config",
     "build": "webpack --config webpack.prod"
   },
   "repository": {
@@ -30,11 +30,13 @@
     "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.11",
+    "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.4.0",
     "optimize-css-assets-webpack-plugin": "^4.0.1",
     "style-loader": "^0.21.0",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.4"
+    "webpack-cli": "^2.1.4",
+    "webpack-dev-server": "^3.1.4"
   }
 }

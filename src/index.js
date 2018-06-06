@@ -1,80 +1,79 @@
-// Private members prefixed by _
-const _attributes = new WeakMap();
-const _instances = new WeakMap();
-const _mutation = new WeakMap();
-const _observer = new WeakMap();
-const _bind = new WeakMap();
-const _unbind = new WeakMap();
+// AttributeJS
 
-// Global object
-class AttributeJS {
-  constructor() {
-    _attributes.set(this, {});
+const _attrs = [];  // [...Attributes]
+const _ctors = {}; // { Attribute: Constructor }
+const _insts = new WeakMap(); // { El: { Attribute: Instance } }
 
-    _mutation.set(this, (mutations) => {
-      // Attribute mutations
-      mutations.filter(mutation => mutation.type === `attributes`)
-        .filter(mutation => _attributes.get(this)[mutation.attributeName])
-        .map(mutation => {
-          // Custom attribute added
-          if (!_instances.get(mutation.target))
-            _bind.get(this)(mutation.target, _attributes.get(this)[mutation.attributeName]);
-          // Custom attribute removed
-          else if (mutation.target.getAttributeNames().indexOf(mutation.attributeName) < 0)
-            _unbind.get(this)(_instances.get(mutation.target));
-        });
-      // Child list mutations
-      mutations.filter(mutation => mutation.type === `childList`)
-        .map(mutation => {
-          // Element added
-          mutation.addedNodes.forEach(element => {
-            Object.keys(_attributes.get(this))
-              .filter(attribute => 
-                element.nodeType === 1 &&
-                element.getAttributeNames().indexOf(attribute) > -1 && 
-                !_instances.get(element)
-              )
-              .map(attribute => {
-                _bind.get(this)(element, _attributes.get(this)[attribute]);
-              });
-          });
-          // Element removed
-          mutation.removedNodes.forEach(element => {
-            if (_instances.get(element)) 
-              _unbind.get(this)(_instances.get(element));      
-          });
-        });
-    });
-
-    _observer.set(this, new MutationObserver(_mutation.get(this)));
-
-    _observer.get(this).observe(document, {
-      childList: true,
-      subtree: true,
-      attributes: true
-    });
-
-    _bind.set(this, (element, Constructor) => {
-      let instance = new Constructor();
-      instance.element = element;
-      _instances.set(element, instance);
-      if (instance.connectedCallback)
-        instance.connectedCallback();
-    });
-
-    _unbind.set(this, (instance) => {
-      if (instance.disconnectedCallback)
-        instance.disconnectedCallback();
-      _instances.delete(instance.element);
-    });
-  }
-
-  // Public define method
-  define(attribute, Constructor) {
-    Object.assign(_attributes.get(this), {
-      [attribute]: Constructor
-    });
+class Attribute {
+  static define(defs) { // { Attribute: Constructor }
+    _define(defs);
   }
 }
 
-window.attributejs = new AttributeJS();
+function _define(defs) { // { Attribute: Constructor }
+  Object.keys(defs).forEach(attr => {
+    if (_attrs.indexOf(attr) > -1) { return; }
+    _attrs.push(attr);
+    _ctors[attr] = defs[attr];
+  });
+  [...document.all].map(el => _queryList(el, _mount));
+}
+
+function _handleMutations(ms) { // Mutations
+  ms.forEach(m => {
+    switch(m.type) {
+      case 'childList': {
+        m.addedNodes.forEach(n => _queryList(n, _mount));
+        m.removedNodes.forEach(n => _queryList(n, _unmount));
+        break;
+      }
+      case 'attributes': {
+        if (!_attrs.includes(m.attributeName)) { return; }
+        m.target.getAttributeNames().includes(m.attributeName)
+          ? _mount(m.target, m.attributeName)
+          : _unmount(m.target, m.attributeName);
+        break;
+      }
+      default: { break; }
+    }
+  });
+}
+
+function _queryList(n, cb) { // Node, Callback
+  if (n.nodeType !== 1) { return; }
+  _attrs.forEach(a => {
+    if (n.getAttributeNames().includes(a)) { cb(n, a); }
+    n.querySelectorAll(`[${a}]`).forEach(el => {
+      cb(el, a);
+    });
+  });
+}
+
+function _mount(n, a) { // Node, Attribute
+  if (!_insts.has(n)) { _insts.set(n, {}); }
+  const el = _insts.get(n);
+  if (el[a]) { return; }
+  el[a] = new _ctors[a]();
+  el[a].element = n;
+  el[a].connectedCallback();
+}
+
+function _unmount(n, a) { // Node, Attribute
+  const el = _insts.get(n);
+  if (!el) { return; }
+  if (!el[a]) { return; }
+  el[a].disconnectedCallback();
+  delete el[a];
+  if (!Object.entries(el).length) { _insts.delete(n); }
+}
+
+new MutationObserver(_handleMutations).observe(
+  document,
+  { 
+    childList: true,
+    subtree: true,
+    attributes: true 
+  },
+);
+
+export {Attribute};

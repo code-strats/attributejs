@@ -1,4 +1,4 @@
-# Attribute.js
+# AttributeJS
 
 Define custom attributes on standard HTML elements and use the same [Custom Elements v1 API](https://developers.google.com/web/fundamentals/web-components/customelements) you know and love to encapsulate your functionality.
 
@@ -10,19 +10,13 @@ Install via NPM or Yarn
 npm i attributejs --save
 ```
 
-Include via script tag
-
-```html
-<script src="node_modules/attributejs"></script>
-```
-
-Or import as an ES module
+Import as an ES module
 
 ```js
-import 'attributejs';
+import { Attribute } from 'attributejs';
 ```
 
-Once imported, the `attributejs` instance will be added to the window object.
+Once imported, the `Attribute` class exposes the static method `define` which can be used to define custom attributes.
 
 ## Example
 
@@ -31,14 +25,10 @@ Once imported, the `attributejs` instance will be added to the window object.
 ```
 
 ```js
+import { Attribute } from 'attributejs';
+
 class MyButton {
   constructor() {
-    this.handleClick = () => {
-      console.log(`
-        The binded element that has the 'my-button' attribute 
-        has been clicked!
-      `);
-    }
   }
 
   connectedCallback() {
@@ -46,7 +36,6 @@ class MyButton {
       The 'my-button' attribute has been added to an element and 
       is now binded to said element.
     `);
-    this.element.addEventListener(`click`, this.handleClick);
     this.setBackground();
   }
 
@@ -55,7 +44,6 @@ class MyButton {
       The 'my-button' attribute has been removed from the binded element,
       or the binded element has been removed from the DOM.
     `);
-    this.element.removeEventListener(`click`, this.handleClick);
   }
 
   setBackground() {
@@ -64,24 +52,28 @@ class MyButton {
   }
 }
 
-attributejs.define('my-button', MyButton);
+Attribute.define({
+  ['my-button']: MyButton
+});
 ```
 
 ## API
 
-The Attribute.js library exposes a very similar API to the [Custom Elements v1 spec](https://developers.google.com/web/fundamentals/web-components/customelements).
+The AttributeJS library exposes a very similar API to the [Custom Elements v1 spec](https://developers.google.com/web/fundamentals/web-components/customelements).
 
-Classes that are defined on the global object are given lifecycle callbacks to which you may respond appropriately with your corresponding code.
+Classes that are defined are given lifecycle callbacks to which you may respond appropriately with your corresponding code.
 
 ### Defining custom attributes
 
-To define a custom attribute, invoke the `define` method on the global object `attributejs`.
-The method takes two arguments:
-1. An attribute name
-2. A class definition
+To define a custom attribute, import the `Attribute` class and use the `define` method, passing an object as an argument.
+The object key should be the attribute name. The object value should be the custom class declaration.
+Many classes can be passed within the object to the `define` method.
 
 ```js
-attributejs.define('my-button', MyButton);
+Attribute.define({ 
+  ['my-button']: MyButton, 
+  ['my-second-button']: MySecondButton ,
+});
 ```
 
 ### Lifecycle callbacks
@@ -93,10 +85,9 @@ Note: The `element` property is not yet exposed to the class instance.
 
 #### connectedCallback
 
-The connectedCallback method is invoked when the element is first added to the DOM.
-At this point, the element will be binded to the class instance via the property `element`.
+The connectedCallback method is invoked when the element is first binded to the attribute.
 
-You are then able to manipulate the element via this special property.
+You are then able to manipulate the host element via the `element` property.
 
 ```js
 connectedCallback() {
@@ -128,7 +119,7 @@ disconnectedCallback() {
 Safari have declined allowing developers to extend native elements with the proposed `is="my-element"`
 attribute, which has created complications for the Custom Elements v1 project.
 
-The Attribute.js library adds support for extending native elements, whilst keeping the Custom Elements v1 API intact.
+The AttributeJS library adds support for extending native elements, whilst keeping the Custom Elements v1 API intact.
 
 ### License
 
